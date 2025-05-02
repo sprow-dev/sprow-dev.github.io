@@ -3,7 +3,16 @@ html, body {
   background-color: black;
   color: white;
 }
+
 .footer {
   background-color: white;
   color: black;
+}
+
+a:link {
+  color: #48addb;
+}
+
+a:visited {
+  color: #d620e3;
 }
