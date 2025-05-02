@@ -1,8 +1,10 @@
 html, body {
   font-family: "Courier New";
+  background-color: black;
+  color: white;
 }
 
 .footer {
-  background-color: black;
-  color: white;
+  background-color: white;
+  color: black;
 }
