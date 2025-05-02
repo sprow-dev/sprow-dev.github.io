@@ -5,6 +5,7 @@ html, body {
 }
 
 .footer {
+  font-size: 10pt;
   background-color: white;
   color: black;
 }
@@ -15,4 +16,8 @@ a:link {
 
 a:visited {
   color: #d620e3;
+}
+
+pre {
+  font-size: 14pt;
 }
