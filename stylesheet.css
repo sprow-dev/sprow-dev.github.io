@@ -5,7 +5,7 @@ html, body {
 }
 
 .footer {
-  font-size: 10pt;
+  font-size: 7pt;
   background-color: white;
   color: black;
 }
@@ -19,5 +19,5 @@ a:visited {
 }
 
 pre {
-  font-size: 14pt;
+  font-size: 16pt;
 }
