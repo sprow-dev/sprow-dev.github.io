@@ -5,11 +5,11 @@ html, body {
 }
 
 h1 {
-  font-size: 24pt;
+  font-size: 32pt;
 }
 
 .footer {
-  font-size: 7pt;
+  font-size: 5pt;
   background-color: white;
   color: black;
 }
@@ -23,5 +23,5 @@ a:visited {
 }
 
 pre {
-  font-size: 16pt;
+  font-size: 15pt;
 }
