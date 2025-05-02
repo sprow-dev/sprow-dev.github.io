@@ -4,6 +4,10 @@ html, body {
   color: white;
 }
 
+h1 {
+  font-size: 24pt;
+}
+
 .footer {
   font-size: 7pt;
   background-color: white;
