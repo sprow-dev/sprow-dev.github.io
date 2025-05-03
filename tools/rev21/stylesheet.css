@@ -36,7 +36,7 @@ textarea {
   color: white;
   border: 1px solid #555;
   border-radius: 5px;
-  padding: 8px;
+  padding: 4px;
 }
 
 button {
@@ -44,7 +44,7 @@ button {
   color: white;
   border: 1px solid #555;
   border-radius: 5px;
-  padding: 10px 20px;
+  padding: 4px 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
