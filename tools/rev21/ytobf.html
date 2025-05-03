@@ -30,7 +30,7 @@
 
                 if (videoId) {
                     const encodedId = btoa(videoId);
-                    const newLink = `sprow.dev/tools/rev21/gtl16.html?lid=${encodedId}`;
+                    const newLink = `https://sprow.dev/tools/rev21/gtl16.html?lid=${encodedId}`;
                     document.getElementById("result").innerHTML = `Here's your converted link: <a href="${newLink}" target="_blank">${newLink}</a>`;
                 } else {
                     document.getElementById("result").textContent = "Invalid YouTube link.";
