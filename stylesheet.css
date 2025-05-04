@@ -1,11 +1,12 @@
 html, body {
-  font-family: "Courier New";
+  font-family: "Courier New", sans-serif;
   background-color: black;
   color: white;
+  font-size: 15pt;
 }
 
 h1 {
-  font-size: 32pt;
+  font-size: 40pt;
 }
 
 h5 {
@@ -13,7 +14,7 @@ h5 {
 }
 
 footer {
-  font-size: 8pt;
+  font-size: 10pt;
   color: white;
 }
 
@@ -26,16 +27,18 @@ a:visited {
 }
 
 pre {
-  font-size: 15pt;
+  font-size: 20pt;
 }
 
 input[type="text"],
 textarea {
+  margin-left: 10px;
   background-color: black;
   color: white;
   border: 1px solid #555;
   border-radius: 5px;
   padding: 4px;
+  font-size: 12pt;
 }
 
 button {
@@ -47,6 +50,7 @@ button {
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  font-size: 12pt;
 }
 
 button::before {
@@ -69,9 +73,13 @@ button:hover::before {
   display: none;
 }
 
-#nav button {
-  border: none;
-  border-radius: 0;
-  padding: 0;
-  margin: 0;
+.navbar {
+  font-size: 5px;
+}
+
+.nav {
+  margin-left: 0;
+  background-color: transparent;
+  padding: 4px 6px;
+  font-size: 16pt;
 }
