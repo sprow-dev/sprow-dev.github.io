@@ -41,7 +41,7 @@ textarea {
   font-size: 12pt;
 }
 
-button {
+.button {
   background-color: black;
   color: white;
   border: 1px solid #555;
@@ -53,7 +53,7 @@ button {
   font-size: 12pt;
 }
 
-button::before {
+.button::before {
   content: "";
   position: absolute;
   top: 0;
@@ -65,7 +65,7 @@ button::before {
   z-index: 1;
 }
 
-button:hover::before {
+.button:hover::before {
   left: 0;
 }
 
