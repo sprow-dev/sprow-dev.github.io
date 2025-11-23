@@ -1,0 +1,146 @@
+body {
+    font-family: "Courier New", sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    background-color: black;
+    color: white;
+}
+
+a:link {
+    color: #48addb;
+}
+
+a:visited {
+    color: #d620e3;
+}
+
+#player_turn {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #eea;
+}
+
+.button {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 4px 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    font-size: 12pt;
+    margin: 5px;
+}
+
+.button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.2);
+    transition: left 0.2s ease-in-out;
+    z-index: 1;
+}
+
+.button:hover::before {
+    left: 0;
+}
+
+#board {
+    display: grid;
+    grid-template-columns: repeat(3,16vw);
+    grid-template-rows: repeat(3, 16vh);
+    box-shadow: 0 0 20px #ff0;
+    border-radius: 3px;
+}
+
+.cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 500%;
+    font-weight: bold;
+    border: 1px solid #aaa;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.cell:hover {
+    background-color: #221;
+}
+
+.cell:hover:not(.x, .o) {
+    background-color: #222;
+}
+
+.cell.x {
+    background-color: #110;
+    text-shadow: 0 0 30px #ff0;
+}
+
+.cell.o {
+    background-color: #011;
+    text-shadow: 0 0 30px #0ff;
+}
+
+.code_input {
+    background-color: black;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 4px 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    font-size: 12pt;
+}
+
+#mode_selection {
+    padding: 15px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #fff;
+}
+
+#code_box {
+    margin-top: 5px;
+}
+
+#random {
+    background-color:#ff0;
+    color:black;
+    box-shadow: 0 0 10px #ff0;
+}
+
+#random::before {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#code {
+    background-color:#0ff;
+    color:black;
+    box-shadow: 0 0 10px #0ff;
+}
+
+#code::before {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#private {
+    background-color:#0f0;
+    color:black;
+    box-shadow: 0 0 10px #0f0;
+}
+
+#private::before {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+#game_ping {
+    text-shadow: 0 0 10px #000;
+}

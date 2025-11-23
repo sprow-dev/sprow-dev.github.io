@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>sprow.dev TICTACTOE ONLINE</title>
+        <link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+        <a href="/">sprow.dev</a>
+        <h1>sprow.dev Tic Tac Toe Online</h1>
+        <p>Please select a mode:</p>
+        <div id="mode_selection">
+            <button id="offline" class="button" onclick="window.location.href='game-offline.html'">Join offline</button>
+            <br/>
+            <br/>
+            <button id="random" class="button">Join a random game</button>
+            <br/>
+            <button id="private" class="button">Create a private game</button>
+            <br/>
+            <div id="code_box">
+                <button id="code" class="button">Join</button>
+                <input type="text" id="game_code" placeholder="Enter code here" maxlength="6" class="code_input"/>
+            </div>
+        </div>
+
+        <script>
+            document.getElementById("random").addEventListener("click", () => {
+                window.location.href = "game-online.html?mode=queue";
+            });
+            document.getElementById("code").addEventListener("click", () => {
+                const code = document.getElementById("game_code").value;
+                if (code.length == 6) {
+                    window.location.href = `game-online.html?mode=code&gameId=${code}`;
+                } else {
+                    alert("Please enter a valid code.");
+                }
+            });
+            document.getElementById("private").addEventListener("click", () => {
+                window.location.href = "game-online.html?mode=private";
+            });
+        </script>
+    </body>
+</html>
