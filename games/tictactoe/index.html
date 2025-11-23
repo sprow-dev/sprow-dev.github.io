@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>sprow.dev TICTACTOE ONLINE</title>
+        <link rel="stylesheet" href="stylesheet.css">
+    </head>
+    <body>
+        <a href="/">sprow.dev</a>
+        <h1>sprow.dev Tic Tac Toe Online</h1>
+        <p>Please select a mode:</p>
+        <div id="mode_selection">
+            <button id="random" class="button">Join a random game</button>
+            <br/>
+            <br/>
+            <button id="code" class="button">Enter a code</button>
+            <input type="text" id="game_code" placeholder="Enter the game code" maxlength="6" class="code_input"/>
+            <br/>
+            <br/>
+            <button id="offline" class="button" onclick="window.location.href='game-offline.html'">Join offline</button>
+        </div>
+
+        <script>
+            document.getElementById("random").addEventListener("click", () => {
+                window.location.href = "game-online.html?mode=queue";
+            });
+            document.getElementById("code").addEventListener("click", () => {
+                const code = docuemnt.getElementById("game_code");
+                if (code.length == 6) {
+                    window.location.href = `game-online.html?mode=code&gameId=${code}`;
+                } else {
+                    alert("Please enter a valid code.");
+                }
+            });
+        </script>
+    </body>
+</html>
