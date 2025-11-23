@@ -129,7 +129,7 @@ function updateLocalState(gameData) {
     const isLocalTurn = gameData.turn == localPlayerLetter;
 
     if (gameData.status == "waiting") {
-        statusInfo.textContent = "Waiting for opponent.";
+        console.log("Waiting"); // i had to put something here
     } else if (gameData.status == "playing") {
         statusInfo.textContent = `You are ${localPlayerLetter}.`;
         if (isLocalTurn) {
