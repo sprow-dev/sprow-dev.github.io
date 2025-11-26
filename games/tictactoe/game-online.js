@@ -258,7 +258,7 @@ window.onload = () => {
     if (mode == "queue") {
         handleQueue();
     } else if (mode == "code" && code) {
-        joinExistingGame(code);
+        joinExistingGame(code.toUpperCase());
     } else if (mode == "code" && !code) {
         statusInfo.textContent = "No game code provided."
     } else if (mode == "private") {
