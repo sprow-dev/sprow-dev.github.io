@@ -30,7 +30,7 @@
             document.getElementById("code").addEventListener("click", () => {
                 const code = document.getElementById("game_code").value;
                 if (code.length == 6) {
-                    window.location.href = `game-online.html?mode=code&gameId=${code}`;
+                    window.location.href = `game-online.html?mode=code&gameId=${code.toUpperCase()}`;
                 } else {
                     alert("Please enter a valid code.");
                 }
