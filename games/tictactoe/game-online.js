@@ -2,8 +2,8 @@ let localPlayerLetter = null;
 let opponentLetter = null;
 let gameId = null;
 let unsubscribeGame = null;
+let cells = document.querySelectorAll(".cell")
 
-const cells = document.querySelectorAll(".cell")
 const turnDisplay = document.getElementById("player_turn");
 const statusInfo = document.getElementById("game_status");
 const mainBoard = document.getElementById("board");
@@ -23,7 +23,7 @@ function generateGameId() {
     return Math.random().toString(36).substring(2,8).toUpperCase();
 }
 
-async function createNewGame(id, privacy = "public") {
+async function createNewGame(id, privacy = "public",grid_size = 3) {
     gameId = id;
     localPlayerLetter = "X";
     opponentLetter = "O";
@@ -31,11 +31,12 @@ async function createNewGame(id, privacy = "public") {
     const gameOnDB = db.collection("games").doc(gameId);
 
     await gameOnDB.set({
-        board: Array(9).fill(null),
+        board: Array(grid_size**2).fill(null),
         status: "waiting",
         playerX_active: true,
         playerO_active: null,
         privacy: privacy,
+        boardSize:grid_size,
         turn: "X",
         playerX: "x",
         playerO: null,
@@ -64,6 +65,9 @@ async function joinExistingGame(id) {
         }
 
         const gameData = doc.data();
+
+        updateBoard(gameData);
+        cells = document.querySelectorAll(".cell");
 
         if (gameData.status == "playing" || gameData.playerO) {
             statusInfo.textContent = "403 Requested game is already in session.";
@@ -121,6 +125,11 @@ function listenToGameUpdates(gameOnDB) {
 }
 
 function updateLocalState(gameData) {
+    if (mainBoard.children.length == 0 || mainBoard.children.length !== (gameData.gridSize**2)) {
+        updateBoard(gameData);
+        cells = document.querySelectorAll(".cell");
+    }
+
     gameData.board.forEach((letter,idx) => {
         const cell = cells[idx];
 
@@ -183,7 +192,7 @@ async function cellClick(event) {
         newBoard[idx] = localPlayerLetter;
         const newTurn = opponentLetter;
 
-        const winner = checkWin(newBoard);
+        const winner = checkWin(newBoard,gameData.boardSize);
         let newStatus = "playing";
         let newWinner = null;
 
@@ -224,19 +233,33 @@ async function cellClick(event) {
     });
 }
 
-function checkWin(board) {
-    const winConditions = [
-        [0, 1, 2], [3, 4, 5], [6, 7, 8],
-        [0, 3, 6], [1, 4, 7], [2, 5, 8],
-        [0, 4, 8], [2, 4, 6]
-    ];
+function checkWin(board,gridSize) {
+    const lines = [];
 
-    const isMatch = (a,b,c) => board[a] && board[b] == board[a] && board[c] == board[a] ? board[a] : null;
+    for (let i = 0; i < gridSize; i++) {
+        const row = [];
+        const col = [];
+        for (let x = 0; x < gridSize; x++) {
+            row.push(board[i*gridSize+x]);
+            col.push(board[x*gridSize+i]);
+        }
+        lines.push(row);
+        lines.push(col);
+    }
 
-    for (const [a,b,c] of winConditions) {
-        const match = isMatch(a,b,c);
-        if (match) {
-            return match;
+    const diagonal1 = [];
+    const diagonal2 = [];
+    for (let i = 0; i < gridSize; i++) {
+        diagonal1.push(board[i*gridSize+i]);
+        diagonal2.push(board[i*gridSize+(gridSize-1-i)]);
+    }
+    lines.push(diagonal1);
+    lines.push(diagonal2);
+
+    for (const line of lines) {
+        const firstIdx = line[0];
+        if (firstIdx !== null && line.every(cell => cell == firstIdx)) {
+            return firstIdx;
         }
     }
 
@@ -244,6 +267,30 @@ function checkWin(board) {
         return "no one";
     }
     return null;
+}
+
+function updateBoard(gameData) {
+    const gridSize = gameData.boardSize;
+    const boardSize = gridSize**2;
+
+    mainBoard.style.gridTemplateColumns = `repeat(${gridSize}, 1fr)`;
+    mainBoard.style.gridTemplateRows = `repeat(${gridSize}, 1fr)`;
+
+    mainBoard.innerHTML = "";
+
+    for (let i = 0; i < boardSize; i++) {
+        const cell = document.createElement("div");
+        cell.classList.add("cell");
+        cell.dataset.index = i;
+        cell.textContent = gameData.board[i] || null;
+
+        if (gameData.board[i]) {
+            cell.classList.add(gameData.board[i].toLowerCase());
+        }
+
+        cell.addEventListener("click",cellClick);
+        mainBoard.appendChild(cell);
+    }
 }
 
 cells.forEach(cell => {
@@ -254,6 +301,7 @@ window.onload = () => {
     const params = getUrlParams();
     const mode = params.mode;
     const code = params.gameId;
+    const grid_size = params.gridSize;
 
     if (mode == "queue") {
         handleQueue();
@@ -263,7 +311,7 @@ window.onload = () => {
         statusInfo.textContent = "No game code provided."
     } else if (mode == "private") {
         console.log("(i) Private mode")
-        createNewGame(generateGameId(),"private")
+        createNewGame(generateGameId(),"private",grid_size)
     } else {
         statusInfo.textContent = "No game mode provided."
     }

@@ -53,8 +53,8 @@ a:visited {
 
 #board {
     display: grid;
-    grid-template-columns: repeat(3,16vw);
-    grid-template-rows: repeat(3, 16vh);
+    height: 65vh;
+    width: 65vh;
     box-shadow: 0 0 20px #ff0;
     border-radius: 3px;
 }
@@ -63,7 +63,7 @@ a:visited {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 500%;
+    font-size: 250%;
     font-weight: bold;
     border: 1px solid #aaa;
     cursor: pointer;
@@ -98,6 +98,17 @@ a:visited {
     position: relative;
     overflow: hidden;
     font-size: 12pt;
+    width: 90px;
+}
+
+#dropdown {
+    padding: 2px;
+    padding-left:7px;
+    border: 2px solid #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px #fff;
+    display: none;
+    margin: none;
 }
 
 #mode_selection {
@@ -107,9 +118,9 @@ a:visited {
     box-shadow: 0 0 20px #fff;
 }
 
-#code_box {
+/*#code_box {
     margin-top: 5px;
-}
+}*/
 
 #random {
     background-color:#ff0;

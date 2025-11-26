@@ -15,11 +15,18 @@
             <br/>
             <button id="random" class="button">Join a random game</button>
             <br/>
-            <button id="private" class="button">Create a private game</button>
+            <div class="private">
+                <button id="private" class="button">Create a private game</button>
+                <button id="more_content" onclick="dropContent()" class="button">More...</button>
+                <div id="dropdown">
+                    <input type="text" id="grid_size" placeholder="Custom grid" maxlength="3" class="code_input"/>
+                    <button id="use_custom_settings" class="button">Use custom settings</button>
+                </div>
+            </div>
             <br/>
             <div id="code_box">
                 <button id="code" class="button">Join</button>
-                <input type="text" id="game_code" placeholder="Enter code here" maxlength="6" class="code_input"/>
+                <input type="text" id="game_code" placeholder="Enter code" maxlength="6" class="code_input"/>
             </div>
         </div>
 
@@ -36,7 +43,17 @@
                 }
             });
             document.getElementById("private").addEventListener("click", () => {
-                window.location.href = "game-online.html?mode=private";
+                window.location.href = "game-online.html?mode=private&gridSize=3";
+            });
+
+            function dropContent() {
+                const drop = document.getElementById("dropdown");
+                drop.style.display = "block";
+            }
+
+            document.getElementById("use_custom_settings").addEventListener("click", () => {
+                const grid = document.getElementById("grid_size").value;
+                window.location.href = `game-online.html?mode=private&gridSize=${grid}`;
             });
         </script>
     </body>
