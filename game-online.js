@@ -7,6 +7,7 @@ const cells = document.querySelectorAll(".cell")
 const turnDisplay = document.getElementById("player_turn");
 const statusInfo = document.getElementById("game_status");
 const mainBoard = document.getElementById("board");
+const pingIndicator = document.getElementById("game_ping");
 
 // TODO: refactor this later to be more efficient, smaller and more readable.
 function getUrlParams() {
@@ -22,7 +23,7 @@ function generateGameId() {
     return Math.random().toString(36).substring(2,8).toUpperCase();
 }
 
-async function createNewGame(id) {
+async function createNewGame(id, privacy = "public") {
     gameId = id;
     localPlayerLetter = "X";
     opponentLetter = "O";
@@ -32,6 +33,9 @@ async function createNewGame(id) {
     await gameOnDB.set({
         board: Array(9).fill(null),
         status: "waiting",
+        playerX_active: true,
+        playerO_active: null,
+        privacy: privacy,
         turn: "X",
         playerX: "x",
         playerO: null,
@@ -67,8 +71,9 @@ async function joinExistingGame(id) {
         }
 
         await gameOnDB.update({
-            player0: 'o',
-            status: 'playing'
+            playerO: 'o',
+            status: 'playing',
+            playerO_active: true
         });
 
         statusInfo.textContent = "Joined requested game. You are O.";
@@ -83,6 +88,8 @@ async function joinExistingGame(id) {
 async function handleQueue() {
     const waitingGame = await db.collection("games")
     .where("status","==","waiting")
+    .where("playerX_active", "==", true)
+    .where("privacy", "==", "public")
     .limit(1).get();
 
     if (!waitingGame.empty) {
@@ -129,7 +136,9 @@ function updateLocalState(gameData) {
     const isLocalTurn = gameData.turn == localPlayerLetter;
 
     if (gameData.status == "waiting") {
-        console.log("Waiting"); // i had to put something here
+        if (gameData.privacy == "public") {
+            statusInfo.textContent = "Your game is waiting for players.";
+        }
     } else if (gameData.status == "playing") {
         statusInfo.textContent = `You are ${localPlayerLetter}.`;
         if (isLocalTurn) {
@@ -160,6 +169,8 @@ async function cellClick(event) {
     const idx = parseInt(event.target.dataset.index);
     const gameOnDB = db.collection("games").doc(gameId);
 
+    const transactionStartTimestamp = Date.now();
+
     await db.runTransaction(async (transaction) => {
         const gameDoc = await transaction.get(gameOnDB);
         const gameData = gameDoc.data();
@@ -187,8 +198,29 @@ async function cellClick(event) {
             status: newStatus,
             winner: newWinner
         });
-    }).catch(error => {
+    })
+    .then(() => {
+        const transactionEndTimestamp = Date.now();
+        const ping = transactionEndTimestamp - transactionStartTimestamp;
+
+        pingIndicator.textContent = `Ping: ${ping} ms`;
+
+        if (ping > 1000) {
+            pingIndicator.style.color = "#F00";
+            pingIndicator.style.textShadow = "0 0 10px #F00";
+        } else if (ping > 300) {
+            pingIndicator.style.color = "#FF0";
+            pingIndicator.style.textShadow = "0 0 10px #FF0";
+        } else {
+            pingIndicator.style.color = "#0F0";
+            pingIndicator.style.textShadow = "0 0 10px #0F0";
+        }
+    })
+    .catch(error => {
         console.error("Fail. ", error);
+
+        pingIndicator.textContent = "Ping: Error. Did you move out of turn?"
+        pingIndicator.style.color = "red";
     });
 }
 
@@ -226,9 +258,12 @@ window.onload = () => {
     if (mode == "queue") {
         handleQueue();
     } else if (mode == "code" && code) {
-        joinExistingGame(code);
+        joinExistingGame(code.toUpperCase());
     } else if (mode == "code" && !code) {
         statusInfo.textContent = "No game code provided."
+    } else if (mode == "private") {
+        console.log("(i) Private mode")
+        createNewGame(generateGameId(),"private")
     } else {
         statusInfo.textContent = "No game mode provided."
     }
@@ -237,6 +272,19 @@ window.onload = () => {
 window.onbeforeunload = () => {
     if (unsubscribeGame) {
         unsubscribeGame();
+
+        const gameOnDB = db.collection("games").doc(gameId)
+        let updateData = {};
+
+        if (opponentLetter == "O") {
+            updateData.playerX_active = false;
+        } else if (opponentLetter == "X") {
+            updateData.playerO_active = false;
+        }
+
+        gameOnDB.update(updateData).catch(e => {
+            console.warn("(W) Cannot update data. Process probably doesn't have time to finish.")
+        });
     }
 }
 
