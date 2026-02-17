@@ -102,7 +102,7 @@ function checkFork(letter,cellsAvailable) {
         ];
 
         for (const [a,b,c] of winConditions) {
-            if (isMatch(a,b,c)) {
+            if (isMatch(board[a],board[b],board[c])) {
                 winsPossible++;
             }
         }
