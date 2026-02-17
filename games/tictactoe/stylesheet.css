@@ -53,6 +53,8 @@ a:visited {
 
 #board {
     display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     height: 65vh;
     width: 65vh;
     box-shadow: 0 0 20px #ff0;
