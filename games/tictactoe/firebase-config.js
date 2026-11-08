@@ -1,3 +1,6 @@
+// I am aware that I am exposing credentials, but the database used does not contain any critical information
+// or anything that could cause harm if leaked. Thanks for your understanding!
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBY17UIfSvvTFSkKL8IS9hcY_WWc-USVno",

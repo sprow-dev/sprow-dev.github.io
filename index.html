@@ -40,18 +40,43 @@ var routes = {
 function injectHTML(parent, html) {
     var temp = document.createElement('div');
     temp.innerHTML = html;
-    parent.innerHTML = '';
-    var items = [];
-    while (temp.firstChild) items.push(temp.removeChild(temp.firstChild));
-    for (var i = 0; i < items.length; i++) {
-        if (items[i].nodeType === 1 && items[i].tagName === 'SCRIPT') {
-            var s = document.createElement('script');
-            if (items[i].src) s.src = items[i].src;
-            s.textContent = items[i].textContent;
-            parent.appendChild(s);
-        } else {
-            parent.appendChild(items[i]);
+
+    /* pull out every <script> at any depth so they can be re-created */
+    var scripts = [];
+    var cursor = temp.firstChild;
+    while (cursor) {
+        var next = cursor.nextSibling;
+        if (cursor.nodeType === 1 && cursor.tagName === 'SCRIPT') {
+            scripts.push(cursor);
+            temp.removeChild(cursor);
+        } else if (cursor.nodeType === 1) {
+            collectScripts(cursor, scripts);
         }
+        cursor = next;
+    }
+
+    parent.innerHTML = '';
+    while (temp.firstChild) parent.appendChild(temp.removeChild(temp.firstChild));
+
+    for (var i = 0; i < scripts.length; i++) {
+        var s = document.createElement('script');
+        if (scripts[i].getAttribute('src')) s.src = scripts[i].getAttribute('src');
+        s.textContent = scripts[i].textContent;
+        parent.appendChild(s);
+    }
+}
+
+function collectScripts(node, out) {
+    var cursor = node.firstChild;
+    while (cursor) {
+        var next = cursor.nextSibling;
+        if (cursor.nodeType === 1 && cursor.tagName === 'SCRIPT') {
+            out.push(cursor);
+            node.removeChild(cursor);
+        } else if (cursor.nodeType === 1) {
+            collectScripts(cursor, out);
+        }
+        cursor = next;
     }
 }
 

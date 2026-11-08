@@ -21,15 +21,18 @@
         <input type="text" id="game_code" placeholder="Enter code" maxlength="6" class="code_input"/>
     </div>
 </div>
+</div>
 
 <script>
-document.getElementById("offline").addEventListener("click", () =>
-    navigate("/games/tictactoe/offline"));
+document.getElementById("offline").addEventListener("click", function() {
+    navigate("/games/tictactoe/offline");
+});
 
-document.getElementById("random").addEventListener("click", () =>
-    navigate("/games/tictactoe/online?mode=queue"));
+document.getElementById("random").addEventListener("click", function() {
+    navigate("/games/tictactoe/online?mode=queue");
+});
 
-document.getElementById("code").addEventListener("click", () => {
+document.getElementById("code").addEventListener("click", function() {
     var code = document.getElementById("game_code").value;
     if (code.length == 6)
         navigate("/games/tictactoe/online?mode=code&gameId=" + code.toUpperCase());
@@ -37,16 +40,16 @@ document.getElementById("code").addEventListener("click", () => {
         alert("Please enter a valid code.");
 });
 
-document.getElementById("private").addEventListener("click", () =>
-    navigate("/games/tictactoe/online?mode=private&gridSize=3"));
+document.getElementById("private").addEventListener("click", function() {
+    navigate("/games/tictactoe/online?mode=private&gridSize=3");
+});
 
 function dropContent() {
     document.getElementById("dropdown").style.display = "block";
 }
 
-document.getElementById("use_custom_settings").addEventListener("click", () => {
+document.getElementById("use_custom_settings").addEventListener("click", function() {
     var grid = document.getElementById("grid_size").value;
     navigate("/games/tictactoe/online?mode=private&gridSize=" + grid);
 });
 </script>
-</div>
