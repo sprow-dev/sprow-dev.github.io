@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rev1rdr1</title>
+</head>
+<body>
+    <pre>You are being redirected. If this text does not go away, there may be a malfunction.</pre>
+    <script>
+        var p = new URLSearchParams(window.location.search);
+        var lid = p.get('lid');
+        if (lid) {
+            try { window.location.replace('https://www.youtube.com/watch?v=' + atob(lid)); }
+            catch (_) { document.write('<h2>Oops!</h2><p>Invalid redirect link.</p>'); }
+        } else {
+            document.write('<h2>Oops!</h2><p>Invalid redirect link.</p>');
+        }
+    </script>
+</body>
+</html>

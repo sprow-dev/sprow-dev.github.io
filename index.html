@@ -1,50 +1,92 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>sprow.dev</title>
     <link rel="stylesheet" href="stylesheet.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  </head>
-  <body>
-  <!-- Cookie Consent by TermsFeed https://www.TermsFeed.com -->
-<script type="text/javascript" src="https://www.termsfeed.com/public/cookie-consent/4.2.0/cookie-consent.js" charset="UTF-8"></script>
-<script type="text/javascript" charset="UTF-8">
-document.addEventListener('DOMContentLoaded', function () {
-cookieconsent.run({"notice_banner_type":"headline","consent_type":"express","palette":"dark","language":"en","page_load_consent_levels":["strictly-necessary"],"notice_banner_reject_button_hide":false,"preferences_center_close_button_hide":false,"page_refresh_confirmation_buttons":false,"website_name":"sprow.dev"});
-});
-</script>
-
-<!-- GTag -->
-  <!-- Google tag (gtag.js) -->
-  <script type="text/plain" data-cookie-consent="tracking" async src="https://www.googletagmanager.com/gtag/js?id=G-CKDVEX8T0W"></script>
-  <script type="text/plain" data-cookie-consent="tracking">
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-CKDVEX8T0W');
-  </script>
-<!-- end of GTag-->
-
-<noscript>Free cookie consent management tool by <a href="https://www.termsfeed.com/">TermsFeed Generator</a></noscript>
-<!-- End Cookie Consent by TermsFeed https://www.TermsFeed.com -->
-    <article>
-      <header>
+</head>
+<body>
+<article>
+    <header>
         <nav class="navbar">
-          <a href="/"><button class="nav button">Home</button></a>
-          <a href="/tools"><button class="nav button">Tools</button></a>
+            <button class="nav button" data-route="/">Home</button>
+            <button class="nav button" data-route="/tools">Tools</button>
         </nav>
         <center>
-          <h5>! This page is currently under development. !</h5>
-          <h1>sprow.dev</h1>
+            <h1>sprow.dev</h1>
         </center>
-      </header>
-      <section>
-        <pre>  Welcome to <a href="https://sprow.dev">sprow.dev</a>, a random website on the internet.</pre>
-      </section>
-      <footer>
-        <p>©2025 <a href="https://sprow.dev">sprow.dev</a>. <a href="/privacy">Privacy</a> <a href="/license">License</a></p>
-      </footer>
-    </article>
-  </body>
+    </header>
+
+    <main id="app"></main>
+
+    <footer>
+        <p>&copy;2025 <a href="/" data-route="/">sprow.dev</a>. <a href="/license" data-route="/license">License</a></p>
+    </footer>
+</article>
+
+<script>
+var routes = {
+    '/':                    '/home.html',
+    '/tools':               '/tools.html',
+    '/license':             '/license.html',
+    '/tools/ytobf':         '/tools/ytobf/ytobf.html',
+    '/tools/1':             '/tools/ytobf/redirect.html',
+    '/games/tictactoe':     '/games/tictactoe/index.html',
+    '/games/tictactoe/offline': '/games/tictactoe/game-offline.html',
+    '/games/tictactoe/online':  '/games/tictactoe/game-online.html',
+};
+
+function injectHTML(parent, html) {
+    var temp = document.createElement('div');
+    temp.innerHTML = html;
+    parent.innerHTML = '';
+    var items = [];
+    while (temp.firstChild) items.push(temp.removeChild(temp.firstChild));
+    for (var i = 0; i < items.length; i++) {
+        if (items[i].nodeType === 1 && items[i].tagName === 'SCRIPT') {
+            var s = document.createElement('script');
+            if (items[i].src) s.src = items[i].src;
+            s.textContent = items[i].textContent;
+            parent.appendChild(s);
+        } else {
+            parent.appendChild(items[i]);
+        }
+    }
+}
+
+async function navigate(path) {
+    var basePath = path.split('?', 2)[0];
+    var file = routes[basePath] || routes['/'];
+
+    try {
+        var res = await fetch(file);
+        if (!res.ok) throw new Error('Page not found');
+        injectHTML(document.getElementById('app'), await res.text());
+
+        if (window.location.pathname + window.location.search !== path)
+            history.pushState({ path: path }, '', path);
+    } catch (_) {
+        document.getElementById('app').innerHTML =
+            '<h2>404</h2><p>Page not found.</p>';
+    }
+}
+
+document.addEventListener('click', function(e) {
+    var t = e.target.closest('[data-route]');
+    if (!t) return;
+    var p = t.getAttribute('data-route');
+    if (p) { e.preventDefault(); navigate(p); }
+});
+
+window.addEventListener('popstate', function() {
+    navigate(window.location.pathname + window.location.search);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    navigate(window.location.pathname + window.location.search);
+});
+</script>
+<script src="tools.js"></script>
+</body>
 </html>

@@ -1,60 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>sprow.dev TICTACTOE ONLINE</title>
-        <link rel="stylesheet" href="stylesheet.css">
-    </head>
-    <body>
-        <a href="/">sprow.dev</a>
-        <h1>sprow.dev Tic Tac Toe Online</h1>
-        <p>Please select a mode:</p>
-        <div id="mode_selection">
-            <button id="offline" class="button" onclick="window.location.href='game-offline.html'">Join offline</button>
-            <br/>
-            <br/>
-            <button id="random" class="button">Join a random game</button>
-            <br/>
-            <div class="private">
-                <button id="private" class="button">Create a private game</button>
-                <button id="more_content" onclick="dropContent()" class="button">More...</button>
-                <div id="dropdown">
-                    <input type="text" id="grid_size" placeholder="Custom grid" maxlength="3" class="code_input"/>
-                    <button id="use_custom_settings" class="button">Use custom settings</button>
-                </div>
-            </div>
-            <br/>
-            <div id="code_box">
-                <button id="code" class="button">Join</button>
-                <input type="text" id="game_code" placeholder="Enter code" maxlength="6" class="code_input"/>
-            </div>
+<link rel="stylesheet" href="/games/tictactoe/stylesheet.css">
+<div id="game-wrapper">
+<h1>sprow.dev Tic Tac Toe Online</h1>
+<p>Please select a mode:</p>
+<div id="mode_selection">
+    <button id="offline" class="button">Join offline</button>
+    <br/><br/>
+    <button id="random" class="button">Join a random game</button>
+    <br/>
+    <div class="private">
+        <button id="private" class="button">Create a private game</button>
+        <button id="more_content" onclick="dropContent()" class="button">More...</button>
+        <div id="dropdown">
+            <input type="text" id="grid_size" placeholder="Custom grid" maxlength="3" class="code_input"/>
+            <button id="use_custom_settings" class="button">Use custom settings</button>
         </div>
+    </div>
+    <br/>
+    <div id="code_box">
+        <button id="code" class="button">Join</button>
+        <input type="text" id="game_code" placeholder="Enter code" maxlength="6" class="code_input"/>
+    </div>
+</div>
 
-        <script>
-            document.getElementById("random").addEventListener("click", () => {
-                window.location.href = "game-online.html?mode=queue";
-            });
-            document.getElementById("code").addEventListener("click", () => {
-                const code = document.getElementById("game_code").value;
-                if (code.length == 6) {
-                    window.location.href = `game-online.html?mode=code&gameId=${code.toUpperCase()}`;
-                } else {
-                    alert("Please enter a valid code.");
-                }
-            });
-            document.getElementById("private").addEventListener("click", () => {
-                window.location.href = "game-online.html?mode=private&gridSize=3";
-            });
+<script>
+document.getElementById("offline").addEventListener("click", () =>
+    navigate("/games/tictactoe/offline"));
 
-            function dropContent() {
-                const drop = document.getElementById("dropdown");
-                drop.style.display = "block";
-            }
+document.getElementById("random").addEventListener("click", () =>
+    navigate("/games/tictactoe/online?mode=queue"));
 
-            document.getElementById("use_custom_settings").addEventListener("click", () => {
-                const grid = document.getElementById("grid_size").value;
-                window.location.href = `game-online.html?mode=private&gridSize=${grid}`;
-            });
-        </script>
-    </body>
-</html>
+document.getElementById("code").addEventListener("click", () => {
+    var code = document.getElementById("game_code").value;
+    if (code.length == 6)
+        navigate("/games/tictactoe/online?mode=code&gameId=" + code.toUpperCase());
+    else
+        alert("Please enter a valid code.");
+});
+
+document.getElementById("private").addEventListener("click", () =>
+    navigate("/games/tictactoe/online?mode=private&gridSize=3"));
+
+function dropContent() {
+    document.getElementById("dropdown").style.display = "block";
+}
+
+document.getElementById("use_custom_settings").addEventListener("click", () => {
+    var grid = document.getElementById("grid_size").value;
+    navigate("/games/tictactoe/online?mode=private&gridSize=" + grid);
+});
+</script>
+</div>

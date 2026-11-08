@@ -1,229 +1,155 @@
-let board = Array(9).fill(null); // board
-let playerTurn = true; // true = player. bools because condition checks are easier
-let activeGame = true;
-let difficulty = false; // false is easy and true is hard
+if (window.__offlineCleanup) window.__offlineCleanup();
 
-const playerLetter = "X";
-const cpuLetter = "O";
+var board = Array(9).fill(null);
+var playerTurn = true;
+var activeGame = true;
+var difficulty = false;
 
-const cells = document.querySelectorAll(".cell");
-const turnDisplay = document.getElementById("player_turn");
-const newGameEasyButton = document.getElementById("new_game_easy");
-const newGameHardButton = document.getElementById("new_game_hard");
+var playerLetter = "X";
+var cpuLetter = "O";
 
-function updateBoard(idx,letter) {
-    const cell = cells[idx];
+var cells = document.querySelectorAll(".cell");
+var turnDisplay = document.getElementById("player_turn");
+var difficultyDisplay = document.getElementById("difficulty");
+var newGameEasyButton = document.getElementById("new_game_easy");
+var newGameHardButton = document.getElementById("new_game_hard");
+
+function updateBoard(idx, letter) {
+    var cell = cells[idx];
     cell.textContent = letter;
     cell.classList.add(letter.toLowerCase());
 }
 
-function isMatch(a,b,c) {
-    if (a && a === b && a === c) {
-        return a;
-    }
-    return null;
+function isMatch(a, b, c) {
+    return a && a === b && a === c ? a : null;
 }
 
 function checkWin() {
-    const winConditions = [
-        [0,1,2],[3,4,5],[6,7,8],
-        [0,3,6],[1,4,7],[2,5,8],
-        [0,4,8],[2,4,6]
-    ]
-
-    for (const [a,b,c] of winConditions) {
-        const match = isMatch(board[a],board[b],board[c]);
-
-        if (match) {
-            return match;
-        }
+    var winConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+    for (var i = 0; i < winConditions.length; i++) {
+        var match = isMatch(board[winConditions[i][0]], board[winConditions[i][1]], board[winConditions[i][2]]);
+        if (match) return match;
     }
-
-    if (!board.includes(null)) {
-        return 'no one';
-    }
-
+    if (!board.includes(null)) return 'no one';
     return null;
 }
 
 function gameEnd(win) {
     activeGame = false;
-    turnDisplay.textContent = `Winner is: ${win}! Thank you for playing.`
-
-    cells.forEach(cell => {
-        cell.textContent = win;
-    });
+    turnDisplay.textContent = "Winner is: " + win + "! Thank you for playing.";
+    for (var i = 0; i < cells.length; i++) cells[i].textContent = win;
 }
 
 function cellClaim(idx) {
     if (!activeGame || board[idx] !== null) return false;
-
     board[idx] = playerLetter;
-    updateBoard(idx,playerLetter);
-
-    const win = checkWin();
-    if(win) {
-        gameEnd(win)
-        return true;
-    }
-
+    updateBoard(idx, playerLetter);
+    var win = checkWin();
+    if (win) { gameEnd(win); return true; }
     playerTurn = false;
-    turnDisplay.textContent = "Your turn: O."
+    turnDisplay.textContent = "Your turn: O.";
     setTimeout(botClaimCell, 1000);
-
     return true;
 }
 
-function checkBetterMove(letter,cellsAvailable) {
-    for (const idx of cellsAvailable) {
+function checkBetterMove(letter, cellsAvailable) {
+    for (var i = 0; i < cellsAvailable.length; i++) {
+        var idx = cellsAvailable[i];
         board[idx] = letter;
-
-        const win = checkWin();
-
+        var win = checkWin();
         board[idx] = null;
-
-        if (win == letter) {
-            return idx;
-        }
+        if (win === letter) return idx;
     }
-
-    return null; // no good moves were found
+    return null;
 }
 
-function checkFork(letter,cellsAvailable) {
-    for (const idx of cellsAvailable) {
+function checkFork(letter, cellsAvailable) {
+    var wc = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],
+        [0, 4, 8], [2, 4, 6]
+    ];
+    for (var i = 0; i < cellsAvailable.length; i++) {
+        var idx = cellsAvailable[i];
         board[idx] = letter;
-        let winsPossible = 0;
-
-        const winConditions = [
-            [0,1,2],[3,4,5],[6,7,8],
-            [0,3,6],[1,4,7],[2,5,8],
-            [0,4,8],[2,4,6]
-        ];
-
-        for (const [a,b,c] of winConditions) {
-            if (isMatch(board[a],board[b],board[c])) {
-                winsPossible++;
-            }
+        var n = 0;
+        for (var j = 0; j < wc.length; j++) {
+            if (isMatch(board[wc[j][0]], board[wc[j][1]], board[wc[j][2]])) n++;
         }
-
         board[idx] = null;
-
-        if (winsPossible >= 2) {
-            return idx;
-        }
+        if (n >= 2) return idx;
     }
-
-    return null; // no forks
+    return null;
 }
 
 function botMakeMove(cellNumber) {
     board[cellNumber] = cpuLetter;
-    updateBoard(cellNumber,cpuLetter);
-
-    const win = checkWin();
-    if (win) {
-        gameEnd(win);
-        return;
-    }
-
+    updateBoard(cellNumber, cpuLetter);
+    var win = checkWin();
+    if (win) { gameEnd(win); return; }
     playerTurn = true;
     turnDisplay.textContent = "Your turn: X.";
 }
 
 function botClaimCell() {
     if (!activeGame) return;
-
-    const cellsAvailable = [];
-    board.forEach((cell,idx) => {
-        if (cell == null) {
-            cellsAvailable.push(idx);
-        }
-    });
-
-    // check if there are any available cells
-    if (cellsAvailable.length == 0) {
-        return;
+    var cellsAvailable = [];
+    for (var i = 0; i < board.length; i++) {
+        if (board[i] === null) cellsAvailable.push(i);
     }
+    if (cellsAvailable.length === 0) return;
 
+    var cpuWin = checkBetterMove(cpuLetter, cellsAvailable);
+    if (cpuWin !== null) { botMakeMove(cpuWin); return; }
 
-    // if o can win here
-    const cpuWin = checkBetterMove(cpuLetter,cellsAvailable);
-    if (cpuWin) {
-        botMakeMove(cpuWin);
-        return;
-    }
-
-    // if o can block x from win here
-    const playerWin = checkBetterMove(playerLetter,cellsAvailable);
-    if (playerWin) {
-        botMakeMove(playerWin);
-        return;
-    }
+    var playerWin = checkBetterMove(playerLetter, cellsAvailable);
+    if (playerWin !== null) { botMakeMove(playerWin); return; }
 
     if (difficulty) {
-        console.log("HARD");
-        // if bot can fork in this turn
-        const cpuFork = checkFork(cpuLetter,cellsAvailable);
-        if (cpuFork) {
-            botMakeMove(cpuFork);
-            return;
+        var cpuFork = checkFork(cpuLetter, cellsAvailable);
+        if (cpuFork !== null) { botMakeMove(cpuFork); return; }
+        if (cellsAvailable.indexOf(4) !== -1) { botMakeMove(4); return; }
+        var corners = [];
+        for (var i = 0; i < cellsAvailable.length; i++) {
+            var c = cellsAvailable[i];
+            if (c === 0 || c === 2 || c === 6 || c === 8) corners.push(c);
         }
-
-        // there is no player forking check because this bot needs to be beatable
-
-        // try to take the center square
-        if (cellsAvailable.includes(4)) {
-            botMakeMove(4)
-            return;
-        }
-
-        // otherwise pick a random corner
-        const cornersAvailable = [0,2,6,8].filter(idx => cellsAvailable.includes(idx));
-        if (cornersAvailable.length > 0) {
-            botMakeMove(cornersAvailable[Math.floor(Math.random() * cornersAvailable.length)])
+        if (corners.length > 0) {
+            botMakeMove(corners[Math.floor(Math.random() * corners.length)]);
             return;
         }
     }
-
-
-    // else just pick something available
-    const cellNumber = cellsAvailable[Math.floor(Math.random()*cellsAvailable.length)];
-
-    botMakeMove(cellNumber);
-    return;
+    botMakeMove(cellsAvailable[Math.floor(Math.random() * cellsAvailable.length)]);
 }
 
 function newGame(newDifficulty) {
-    board = Array(9).fill(null);
+    board = [null, null, null, null, null, null, null, null, null];
     playerTurn = true;
     activeGame = true;
     turnDisplay.textContent = "Your turn: X.";
-    difficulty = newDifficulty
-
-    if (difficulty == false) {
-        difficultyDisplay.textContent = "Current difficulty: EASY"
-    } else {
-        difficultyDisplay.textContent = "Current difficulty: HARD"
+    difficulty = newDifficulty;
+    difficultyDisplay.textContent = "Current difficulty: " + (difficulty ? "HARD" : "EASY");
+    for (var i = 0; i < cells.length; i++) {
+        cells[i].textContent = '';
+        cells[i].classList.remove('x', 'o');
     }
+}
 
-    cells.forEach(cell => {
-        cell.textContent = '';
-        cell.classList.remove('x','o');
+for (var i = 0; i < cells.length; i++) {
+    cells[i].addEventListener('click', function(e) {
+        if (playerTurn && activeGame) cellClaim(parseInt(e.target.dataset.index));
     });
 }
 
-cells.forEach(cell => {
-    cell.addEventListener('click', () => {
-        if (playerTurn && activeGame) {
-            const idx = parseInt(event.target.dataset.index)
-            cellClaim(idx);
-        }
-    });
-});
+newGameEasyButton.addEventListener('click', function() { newGame(false); });
+newGameHardButton.addEventListener('click', function() { newGame(true); });
+newGame(false);
 
-difficultyDisplay = document.getElementById("difficulty");
-newGameEasyButton.addEventListener('click', () => newGame(false));
-newGameHardButton.addEventListener('click', () => newGame(true));
-
-window.onload = () => newGame(false);
+window.__offlineCleanup = function() {
+    var cells2 = document.querySelectorAll(".cell");
+    for (var i = 0; i < cells2.length; i++) cells2[i].style.cursor = "";
+};
