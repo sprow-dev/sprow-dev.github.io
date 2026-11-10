@@ -27,21 +27,21 @@
 
 <script>
 var routes = {
-    '/':                    '/home.html',
-    '/tools':               '/tools.html',
-    '/license':             '/license.html',
-    '/tools/ytobf':         '/tools/ytobf/ytobf.html',
-    '/tools/1':             '/tools/ytobf/redirect.html',
-    '/games/tictactoe':     '/games/tictactoe/index.html',
+    '/':                        '/root_pages/home.html',
+    '/tools':                   '/root_pages/tools.html',
+    '/license':                 '/root_pages/license.html',
+    '/tools/ytobf':             '/tools/ytobf/ytobf.html',
+    '/tools/1':                 '/tools/ytobf/redirect.html',
+    '/games/tictactoe':         '/games/tictactoe/index.html',
     '/games/tictactoe/offline': '/games/tictactoe/game-offline.html',
     '/games/tictactoe/online':  '/games/tictactoe/game-online.html',
+    '/tools/ytthumbview':       '/tools/ytthumbview/thumbview.html',
 };
 
 function injectHTML(parent, html) {
     var temp = document.createElement('div');
     temp.innerHTML = html;
 
-    /* pull out every <script> at any depth so they can be re-created */
     var scripts = [];
     var cursor = temp.firstChild;
     while (cursor) {
